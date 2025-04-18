@@ -23,6 +23,10 @@ df = df.drop(columns=['Sr.No.'])
 # Extract unique industries
 industries = df['Industry Group'].unique()
 
+# Add after imports
+def calculate_cagr(start_value, end_value, num_years):
+    return (((end_value / start_value) ** (1 / num_years)) - 1) * 100
+
 # View function to select industry and show analysis
 def industry_insight(request):
     selected_industry = request.GET.get('industry')
@@ -61,6 +65,12 @@ def industry_insight(request):
         buffer.close()
         chart = base64.b64encode(image_png).decode('utf-8')
 
+  # Calculate CAGR
+        start_value = y[0]  # First year value
+        end_value = y[-1]   # Last year value
+        num_years = len(y) - 1  # Number of years
+        cagr = calculate_cagr(start_value, end_value, num_years)
+        
         # Generate basic insight
         slope = model.coef_[0]
         r2 = model.score(X, y)
@@ -68,14 +78,18 @@ def industry_insight(request):
             'slope': round(slope, 2),
             'r2': round(r2, 2),
             'future_year': future_year,
-            'future_prediction': round(future_value, 2)
+            'future_prediction': round(future_value, 2),
+            'cagr': round(cagr, 2)
         }
 
+         
+      
+        
     return render(request, '_NSDP/industries.html', {
         'industries': industries,
         'selected_industry': selected_industry,
         'chart': chart,
-        'insights': insights
-    })
+        'insights': insights 
+          })
 
 # Create your views here.

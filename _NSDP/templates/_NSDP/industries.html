@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSDP Industry Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center">NSDP Industry Analysis</h1>
+
+    <!-- Industry Selector -->
+    <form method="get" class="mb-8">
+      <label class="block text-lg font-medium mb-2">Select an Industry:</label>
+      <select name="industry" onchange="this.form.submit()" class="w-full p-2 rounded border">
+        {% for industry in industries %}
+          <option value="{{ industry }}" {% if industry == selected_industry %}selected{% endif %}>
+            {{ industry }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    {% if selected_industry %}
+      <!-- Chart -->
+      <div class="bg-white shadow rounded p-4 mb-6">
+        <h2 class="text-xl font-semibold mb-2">Trend: {{ selected_industry }}</h2>
+        <img src="data:image/png;base64,{{ chart }}" alt="NSDP Trend Chart" class="w-full rounded" />
+      </div>
+
+      <!-- Insights -->
+      <div class="bg-white shadow rounded p-4">
+        <h2 class="text-xl font-semibold mb-4">Insights</h2>
+        <ul class="space-y-2">
+          <li><strong>Slope:</strong> ₹{{ insights.slope }} crore/year</li>
+          <li><strong>R² Score:</strong> {{ insights.r2 }}</li>
+          <li><strong>Predicted NSDP ({{ insights.future_year }}):</strong> ₹{{ insights.future_prediction }} crore</li>
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+
+</body>
+</html>
